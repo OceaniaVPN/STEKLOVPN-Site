@@ -386,25 +386,48 @@
     @media(prefers-reduced-motion:reduce) { .game-target { animation:none; } }
 
 
-    /* Гарантируем вращение орбит даже при системном режиме reduced motion. */
-    @media (prefers-reduced-motion: reduce) {
-      .halo { animation: main-orbit-a 64s linear infinite !important; }
-      .halo.h2 { animation: main-orbit-b 82s linear infinite reverse !important; }
-      .halo.h3 { animation: main-orbit-c 54s linear infinite !important; }
-      .core { animation: main-core-spin 46s ease-in-out infinite !important; }
-      .scene-symbol.one { animation: main-symbol-drift 16s ease-in-out infinite !important; }
-      .scene-symbol.two { animation: main-symbol-drift 20s ease-in-out -2s infinite reverse !important; }
-      .scene-symbol.three { animation: main-symbol-glint 12s ease-in-out infinite !important; }
-      .season-pill { animation: main-pill-glow 12s ease-in-out infinite !important; }
+
+    /* Final motion layer: rotate the rings with the independent CSS rotate property. */
+    @keyframes orbit-ring-turn { from { rotate:0deg; } to { rotate:360deg; } }
+    @keyframes core-object-turn {
+      0%,100% { rotate:0deg; translate:0 0; }
+      50% { rotate:180deg; translate:0 -8px; }
     }
-    .weather-layer { position:fixed !important; inset:0 !important; z-index:45 !important; overflow:hidden !important; pointer-events:none !important; }
-    .weather-live { display:block !important; filter:drop-shadow(0 2px 5px rgba(0,0,0,.55)); }
+    .scene .halo {
+      transform-origin:50% 50% !important;
+      animation:orbit-ring-turn 22s linear infinite !important;
+      animation-duration:22s !important;
+      animation-play-state:running !important;
+    }
+    .scene .halo.h2 {
+      animation:orbit-ring-turn 31s linear infinite reverse !important;
+      animation-duration:31s !important;
+      animation-play-state:running !important;
+    }
+    .scene .halo.h3 {
+      animation:orbit-ring-turn 15s linear infinite !important;
+      animation-duration:15s !important;
+      animation-play-state:running !important;
+    }
+    .scene .core {
+      animation:core-object-turn 18s ease-in-out infinite !important;
+      animation-duration:18s !important;
+      animation-play-state:running !important;
+      transform-style:preserve-3d;
+    }
+    /* Seasonal weather is a background layer, behind cards and controls. */
+    .weather-layer {
+      position:fixed !important; inset:0 !important; z-index:0 !important;
+      overflow:hidden !important; pointer-events:none !important;
+    }
+    .weather-live { display:block !important; filter:drop-shadow(0 2px 5px rgba(0,0,0,.5)); }
     .weather-live-leaf { text-shadow:0 2px 8px rgba(255,172,89,.32); }
     .weather-live-snow { text-shadow:0 0 10px rgba(184,228,255,.9); }
     .weather-live-spring { text-shadow:0 0 9px rgba(255,174,211,.8); }
     .weather-live-summer { text-shadow:0 0 12px rgba(255,225,155,.9); }
     .weather-live-rain { width:2px; height:18px; border-radius:2px; background:linear-gradient(transparent,rgba(167,214,248,.95)); }
     .weather-live-ground { z-index:0; background:linear-gradient(to top,rgba(218,242,255,.42),rgba(218,242,255,0)); box-shadow:0 -4px 16px rgba(190,228,255,.1); }
+    .topbar, main, footer, .wrap { position:relative; z-index:3; }
 
 </style>
 </head>
@@ -592,10 +615,10 @@
         <h2 id="easter-game-title">Сезонная охота</h2>
         <button class="game-close" id="easter-game-close" type="button" aria-label="Закрыть">×</button>
       </div>
-      <p class="game-copy">Поймай как можно больше сезонных частиц за 20 секунд. Они не стоят на месте!</p>
+      <p class="game-copy">Поймай как можно больше сезонных частиц за 45 секунд. Они не стоят на месте!</p>
       <div class="game-stats">
         <div class="game-stat">СОБРАНО<strong id="easter-game-score">0</strong></div>
-        <div class="game-stat">ВРЕМЯ<strong id="easter-game-time">20</strong></div>
+        <div class="game-stat">ВРЕМЯ<strong id="easter-game-time">45</strong></div>
       </div>
       <div class="game-arena" id="easter-game-arena">
         <div class="game-arena-hint" id="easter-game-hint">Нажми «Начать игру», чтобы открыть сезонную охоту.</div>
