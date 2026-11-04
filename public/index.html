@@ -412,6 +412,42 @@
     .weather-live-ground { z-index:0; background:linear-gradient(to top,rgba(218,242,255,.42),rgba(218,242,255,0)); box-shadow:0 -4px 16px rgba(190,228,255,.1); }
     .topbar, main, footer, .wrap { position:relative; z-index:3; }
 
+
+    /* Transform-only orbital rotation: compatible with mobile browser compositing. */
+    @keyframes sk-main-ring-outer { from { transform:scaleY(.63) rotate(-27deg); } to { transform:scaleY(.63) rotate(333deg); } }
+    @keyframes sk-main-ring-middle { from { transform:scaleY(.58) rotate(35deg); } to { transform:scaleY(.58) rotate(395deg); } }
+    @keyframes sk-main-ring-inner { from { transform:scaleY(.74) rotate(0deg); } to { transform:scaleY(.74) rotate(360deg); } }
+    @keyframes sk-main-core {
+      0%,100% { transform:translateY(0) rotate(-9deg); }
+      25% { transform:translateY(-8px) rotate(81deg); }
+      50% { transform:translateY(-12px) rotate(171deg); }
+      75% { transform:translateY(-6px) rotate(261deg); }
+    }
+    .scene .halo { animation:sk-main-ring-outer 23s linear infinite !important; animation-duration:23s !important; animation-iteration-count:infinite !important; }
+    .scene .halo.h2 { animation:sk-main-ring-middle 34s linear infinite reverse !important; animation-duration:34s !important; animation-iteration-count:infinite !important; }
+    .scene .halo.h3 { animation:sk-main-ring-inner 15s linear infinite !important; animation-duration:15s !important; animation-iteration-count:infinite !important; }
+    .scene .core { animation:sk-main-core 20s ease-in-out infinite !important; animation-duration:20s !important; animation-iteration-count:infinite !important; }
+    @media(prefers-reduced-motion:reduce) {
+      .scene .halo { animation-duration:52s !important; animation-iteration-count:infinite !important; }
+      .scene .halo.h2 { animation-duration:68s !important; animation-iteration-count:infinite !important; }
+      .scene .halo.h3 { animation-duration:44s !important; animation-iteration-count:infinite !important; }
+      .scene .core { animation-duration:48s !important; animation-iteration-count:infinite !important; }
+    }
+    .weather-layer { position:fixed !important; inset:0 !important; z-index:1 !important; pointer-events:none !important; overflow:hidden !important; }
+    .topbar, main, footer, .wrap { position:relative; z-index:2; }
+    .weather-live { display:block; filter:drop-shadow(0 2px 5px rgba(0,0,0,.48)); }
+    .weather-live-leaf { text-shadow:0 2px 8px rgba(255,172,89,.42); }
+
+    .game-milestone-banner {
+      position:absolute; z-index:6; top:12px; left:50%; width:max-content; max-width:calc(100% - 24px);
+      padding:11px 15px; border:1px solid rgba(240,193,132,.42); border-radius:14px;
+      color:#fff5e8; background:rgba(22,18,16,.92); box-shadow:0 10px 34px rgba(0,0,0,.42),0 0 26px rgba(230,160,106,.2);
+      font-size:12px; font-weight:800; line-height:1.4; text-align:center;
+      opacity:0; transform:translate(-50%,-8px) scale(.96); transition:opacity .2s ease,transform .2s ease;
+      pointer-events:none; backdrop-filter:blur(10px);
+    }
+    .game-milestone-banner.show { opacity:1; transform:translate(-50%,0) scale(1); }
+
 </style>
 </head>
 <body>
@@ -604,6 +640,7 @@
         <div class="game-stat">ВРЕМЯ<strong id="easter-game-time">45</strong></div>
       </div>
       <div class="game-arena" id="easter-game-arena">
+        <div class="game-milestone-banner" id="easter-game-milestone" hidden role="status" aria-live="polite"></div>
         <div class="game-arena-hint" id="easter-game-hint">Нажми «Начать игру», чтобы открыть сезонную охоту.</div>
       </div>
       <div class="game-actions">
