@@ -385,6 +385,27 @@
     @keyframes game-target-float { 0%,100% { translate:0 0; rotate:-8deg; } 50% { translate:0 -8px; rotate:9deg; } }
     @media(prefers-reduced-motion:reduce) { .game-target { animation:none; } }
 
+
+    /* Гарантируем вращение орбит даже при системном режиме reduced motion. */
+    @media (prefers-reduced-motion: reduce) {
+      .halo { animation: main-orbit-a 64s linear infinite !important; }
+      .halo.h2 { animation: main-orbit-b 82s linear infinite reverse !important; }
+      .halo.h3 { animation: main-orbit-c 54s linear infinite !important; }
+      .core { animation: main-core-spin 46s ease-in-out infinite !important; }
+      .scene-symbol.one { animation: main-symbol-drift 16s ease-in-out infinite !important; }
+      .scene-symbol.two { animation: main-symbol-drift 20s ease-in-out -2s infinite reverse !important; }
+      .scene-symbol.three { animation: main-symbol-glint 12s ease-in-out infinite !important; }
+      .season-pill { animation: main-pill-glow 12s ease-in-out infinite !important; }
+    }
+    .weather-layer { position:fixed !important; inset:0 !important; z-index:45 !important; overflow:hidden !important; pointer-events:none !important; }
+    .weather-live { display:block !important; filter:drop-shadow(0 2px 5px rgba(0,0,0,.55)); }
+    .weather-live-leaf { text-shadow:0 2px 8px rgba(255,172,89,.32); }
+    .weather-live-snow { text-shadow:0 0 10px rgba(184,228,255,.9); }
+    .weather-live-spring { text-shadow:0 0 9px rgba(255,174,211,.8); }
+    .weather-live-summer { text-shadow:0 0 12px rgba(255,225,155,.9); }
+    .weather-live-rain { width:2px; height:18px; border-radius:2px; background:linear-gradient(transparent,rgba(167,214,248,.95)); }
+    .weather-live-ground { z-index:0; background:linear-gradient(to top,rgba(218,242,255,.42),rgba(218,242,255,0)); box-shadow:0 -4px 16px rgba(190,228,255,.1); }
+
 </style>
 </head>
 <body>
@@ -586,6 +607,6 @@
     </div>
   </section>
 
-  <script src="/admin.js" defer></script>
+  <script src="/admin.js?v=20261104-fix3" defer></script>
 </body>
 </html>
