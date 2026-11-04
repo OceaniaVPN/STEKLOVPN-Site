@@ -246,6 +246,22 @@
   const GAME_DURATION=45;
   let gameScore=0,gameTime=GAME_DURATION,gameRunning=false,gameSpawnTimer=0,gameClockTimer=0;
   let brandHits=0,brandHitTimeout=0;
+  const gameMilestoneBanner=document.getElementById('easter-game-milestone');
+  let gameMilestoneTimer=0;
+  function showGameMilestone(message){
+    if(!gameMilestoneBanner)return;
+    if(gameMilestoneTimer)clearTimeout(gameMilestoneTimer);
+    gameMilestoneBanner.textContent=message;
+    gameMilestoneBanner.hidden=false;
+    gameMilestoneBanner.classList.remove('show');
+    void gameMilestoneBanner.offsetWidth;
+    gameMilestoneBanner.classList.add('show');
+    gameMilestoneTimer=window.setTimeout(()=>{
+      gameMilestoneBanner.classList.remove('show');
+      gameMilestoneBanner.hidden=true;
+      gameMilestoneTimer=0;
+    },2800);
+  }
   const gameMilestones={
     5:'Первые пять листьев собраны — осень в твоих руках! 🍂',
     10:'Десять! Ты уже настоящий охотник за листьями ✨',
@@ -271,7 +287,7 @@
     stopMiniGame();
     gameScore=0;gameTime=GAME_DURATION;
     gameScoreNode.textContent='0';gameTimeNode.textContent=String(GAME_DURATION);
-    gameArena.replaceChildren(gameHint);gameHint.hidden=false;
+    gameArena.replaceChildren(gameMilestoneBanner,gameHint);gameMilestoneBanner.hidden=true;gameHint.hidden=false;
     gameHint.textContent='Нажми «Начать игру», чтобы открыть сезонную охоту.';
     gameStart.hidden=false;gameStart.textContent='Начать игру';
     gameStatus.textContent='Секрет STEKLOVPN найден ✦';
@@ -290,7 +306,10 @@
       if(!gameRunning)return;
       gameScore++;gameScoreNode.textContent=String(gameScore);
       target.remove();
-      if(gameMilestones[gameScore])gameStatus.textContent=gameMilestones[gameScore];
+      if(gameMilestones[gameScore]){
+        gameStatus.textContent=gameMilestones[gameScore];
+        showGameMilestone(gameMilestones[gameScore]);
+      }
     });
     gameArena.append(target);
     window.setTimeout(()=>target.remove(),2800);
@@ -304,7 +323,7 @@
       'Время вышло! Результат: '+gameScore+'. Попробуешь ещё?';
   }
   function startMiniGame(){
-    stopMiniGame();gameArena.replaceChildren();gameScore=0;gameTime=GAME_DURATION;gameRunning=true;
+    stopMiniGame();gameArena.replaceChildren(gameMilestoneBanner);gameMilestoneBanner.hidden=true;gameScore=0;gameTime=GAME_DURATION;gameRunning=true;
     gameScoreNode.textContent='0';gameTimeNode.textContent=String(GAME_DURATION);
     gameStart.hidden=true;gameStatus.textContent='Лови частицы!';
     spawnGameTarget();gameSpawnTimer=window.setInterval(spawnGameTarget,620);
