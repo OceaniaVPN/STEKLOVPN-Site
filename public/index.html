@@ -448,6 +448,25 @@
     }
     .game-milestone-banner.show { opacity:1; transform:translate(-50%,0) scale(1); }
 
+
+    .orbit-satellite { display:block;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px 2px var(--accent),0 0 22px var(--glow);z-index:4;pointer-events:none; }
+    .orbit-satellite.secondary { width:6px;height:6px;opacity:.9;background:#c8e7ff;box-shadow:0 0 8px 2px rgba(174,218,255,.7),0 0 18px rgba(174,218,255,.4); }
+    .scene .halo,.scene .core,.orb-area .orbit,.orb-area .orb { animation:none !important; }
+    .weather-layer { position:fixed !important; inset:0 !important; z-index:1 !important; pointer-events:none !important; overflow:hidden !important; }
+    .topbar, main, footer, .wrap { position:relative; z-index:2; }
+    .weather-live { display:block; filter:drop-shadow(0 2px 5px rgba(0,0,0,.48)); }
+    .weather-live-leaf { text-shadow:0 2px 8px rgba(255,172,89,.42); }
+
+    .game-milestone-banner {
+      position:absolute;z-index:6;top:12px;left:50%;width:max-content;max-width:calc(100% - 24px);
+      padding:11px 15px;border:1px solid rgba(240,193,132,.42);border-radius:14px;
+      color:#fff5e8;background:rgba(22,18,16,.92);box-shadow:0 10px 34px rgba(0,0,0,.42),0 0 26px rgba(230,160,106,.2);
+      font-size:12px;font-weight:800;line-height:1.4;text-align:center;opacity:0;
+      transform:translate(-50%,-8px) scale(.96);transition:opacity .2s ease,transform .2s ease;
+      pointer-events:none;backdrop-filter:blur(10px);
+    }
+    .game-milestone-banner.show { opacity:1;transform:translate(-50%,0) scale(1); }
+
 </style>
 </head>
 <body>
@@ -494,6 +513,7 @@
         </div>
         <div class="scene" aria-hidden="true">
           <div class="halo"></div><div class="halo h2"></div><div class="halo h3"></div>
+          <span class="orbit-satellite" data-radius="142" data-speed=".64" aria-hidden="true"></span><span class="orbit-satellite secondary" data-radius="112" data-speed="-.91" aria-hidden="true"></span>
           <span class="scene-symbol one" id="scene-symbol-one">✦</span>
           <span class="scene-symbol two" id="scene-symbol-two">✧</span>
           <span class="scene-symbol three" id="scene-symbol-three">·</span>
