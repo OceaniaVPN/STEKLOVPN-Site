@@ -130,15 +130,15 @@ async function handleApi(request, env, url) {
   }
 
   if (path === "/api/admin/session" && method === "GET") {
-    const authenticated = await isAdmin(request, env.ADMIN_PASSWORD || "");
+    const authenticated = await isAdmin(request, env.SESSION_SECRET || "");
     return json({ authenticated });
   }
 
   if (path === "/api/admin/login" && method === "POST") {
     if (!sameOrigin(request, url)) return json({ error: "Origin check failed." }, 403);
-    if (!env.ADMIN_PASSWORD) return json({ error: "Admin password secret is not configured." }, 503);
+    if (!env.ADMIN_PASSWORD || !env.SESSION_SECRET) return json({ error: "Admin secrets are not configured." }, 503);
 
-    const ipHash = await loginAttemptKey(request, env.ADMIN_PASSWORD);
+    const ipHash = await loginAttemptKey(request, env.SESSION_SECRET);
     const now = Math.floor(Date.now() / 1000);
     await env.DB.prepare("DELETE FROM admin_login_attempts WHERE attempted_at < ?").bind(now - 3600).run();
     const attempts = await env.DB.prepare(
@@ -168,7 +168,7 @@ async function handleApi(request, env, url) {
     }
 
     await env.DB.prepare("DELETE FROM admin_login_attempts WHERE ip_hash = ?").bind(ipHash).run();
-    const token = await createSession(env.ADMIN_PASSWORD);
+    const token = await createSession(env.SESSION_SECRET);
     return json({ authenticated: true }, 200, { "Set-Cookie": setSessionCookie(token) });
   }
 
@@ -179,7 +179,7 @@ async function handleApi(request, env, url) {
 
   if (path === "/api/admin/season" && method === "POST") {
     if (!sameOrigin(request, url)) return json({ error: "Origin check failed." }, 403);
-    if (!await isAdmin(request, env.ADMIN_PASSWORD || "")) {
+    if (!await isAdmin(request, env.SESSION_SECRET || "")) {
       return json({ error: "Требуется вход администратора." }, 401);
     }
 
