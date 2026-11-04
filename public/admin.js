@@ -34,7 +34,7 @@
     const active=[],settled=[];
     const cell=28;
     let width=0,height=0,pile=[],last=0,spawn=0,elapsed=0,ground=null;
-    layer.style.zIndex='0';
+    layer.style.zIndex='1';
     layer.style.pointerEvents='none';
     function resize(){
       width=window.innerWidth;height=window.innerHeight;
@@ -152,7 +152,7 @@
     ground.style.height='0';ground.style.pointerEvents='none';
     if(season==='winter')layer.append(ground);
     // Seed the scene immediately so the first leaves are visible without waiting for a full fall.
-    const initialCount=Math.min(cap,season==='autumn'?(mobile?13:20):(mobile?8:14));
+    const initialCount=Math.min(cap,season==='autumn'?(mobile?18:28):(mobile?8:14));
     for(let i=0;i<initialCount;i++)addParticle(true);
     const onResize=()=>resize();
     const onVisibility=()=>{if(!document.hidden&&!weatherFrame){last=0;weatherFrame=requestAnimationFrame(frame);}};
@@ -166,6 +166,74 @@
     };
     weatherFrame=requestAnimationFrame(frame);
   }
+
+  function initOrbitMotion(){
+    const scene=document.querySelector('.scene');
+    const proxyArea=document.querySelector('.orb-area');
+    const isReduced=Boolean(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const speedFactor=isReduced?.55:1;
+    const rings=[];
+    let core=null;
+    if(scene){
+      rings.push(
+        {node:scene.querySelector('.halo'),kind:'main',scale:'.63',base:-27,speed:9.2},
+        {node:scene.querySelector('.halo.h2'),kind:'main',scale:'.58',base:35,speed:-6.8},
+        {node:scene.querySelector('.halo.h3'),kind:'main',scale:'.74',base:0,speed:14}
+      );
+      core=scene.querySelector('.core');
+    }else if(proxyArea){
+      rings.push(
+        {node:proxyArea.querySelector('.orbit:not(.two):not(.three)'),kind:'proxy',scale:'.63',base:-24,speed:9.6},
+        {node:proxyArea.querySelector('.orbit.two'),kind:'proxy',scale:'.58',base:46,speed:-7.1},
+        {node:proxyArea.querySelector('.orbit.three'),kind:'proxy',scale:'.7',base:0,speed:15}
+      );
+      core=proxyArea.querySelector('.orb');
+    }
+    const activeRings=rings.filter(item=>item.node);
+    if(!activeRings.length&&!core)return;
+    for(const item of activeRings){
+      item.node.style.setProperty('animation','none','important');
+      item.node.style.transformOrigin='50% 50%';
+      item.node.style.willChange='transform';
+    }
+    if(core){
+      core.style.setProperty('animation','none','important');
+      core.style.transformOrigin='50% 50%';
+      core.style.willChange='transform';
+    }
+    const satellites=Array.from(document.querySelectorAll('.orbit-satellite')).map((node,index)=>({
+      node,radius:Number(node.dataset.radius)||(index===0?138:108),
+      speed:Number(node.dataset.speed)||(index===0?.62:-.88),phase:index===0?0:Math.PI*.8
+    }));
+    for(const item of satellites){
+      item.node.style.position='absolute';item.node.style.left='50%';item.node.style.top='50%';
+      item.node.style.pointerEvents='none';item.node.style.willChange='transform';
+    }
+    let previous=0,elapsed=0;
+    function animate(now){
+      const dt=previous?Math.min(.05,(now-previous)/1000):0;
+      previous=now;
+      if(!document.hidden)elapsed+=dt*speedFactor;
+      for(const item of activeRings){
+        const angle=item.base+item.speed*elapsed;
+        item.node.style.transform=item.kind==='main'
+          ?'scaleY('+item.scale+') rotate('+angle+'deg)'
+          :'rotate('+angle+'deg) scaleY('+item.scale+')';
+      }
+      if(core){
+        const angle=-9+elapsed*12,lift=Math.sin(elapsed*.72)*6;
+        core.style.transform='translateY('+lift+'px) rotate('+angle+'deg)';
+      }
+      for(const item of satellites){
+        const angle=elapsed*item.speed+item.phase;
+        const x=Math.cos(angle)*item.radius,y=Math.sin(angle)*item.radius*.58;
+        item.node.style.transform='translate3d('+x+'px,'+y+'px,0) translate(-50%,-50%)';
+      }
+      window.requestAnimationFrame(animate);
+    }
+    window.requestAnimationFrame(animate);
+  }
+
   function applySeason(season){
     if(!seasons[season])season='autumn';
     currentSeason=season;root.dataset.season=season;
@@ -344,5 +412,6 @@
     if(brandHits>=5){event.preventDefault();brandHits=0;openMiniGame();}
   });
 
+  initOrbitMotion();
   applySeason(currentSeason);refreshSeason();window.setInterval(refreshSeason,60000);
 }());
