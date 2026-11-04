@@ -1,0 +1,19 @@
+--- a/public/index.html
++++ b/public/index.html
+@@
+-          <div class="season-desc">Администратор выбирает сезон сразу для главной и прокси-страницы.</div>
++          <div class="season-desc">Сезонное оформление STEKLOVPN меняется в течение года.</div>
+@@
+-        <article class="catalog-card coming" aria-label="Наши подписки на Happ — пополняются администратором">
++        <article class="catalog-card coming" aria-label="Наши подписки на Happ — скоро появятся">
+@@
+-            <span class="card-status pending"><span class="status-dot"></span> УПРАВЛЯЕТСЯ АДМИНОМ</span>
++            <span class="card-status pending"><span class="status-dot"></span> СКОРО</span>
+@@
+-          <p>Подписки STEKLOVPN для Happ. Список, описания и ссылки на подключение будут добавляться через админ-панель.</p>
+-          <span class="pending-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Добавление подписок через админ-панель</span>
++          <p>Подписки STEKLOVPN для приложения Happ.</p>
++          <span class="pending-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Скоро появится</span>
+@@
+-      <p><strong>STEKLOVPN развивается.</strong> Сейчас доступен каталог прокси. Подписки Happ будут публиковаться через админ-панель, а тест скорости появится отдельным инструментом. Сезонное оформление общее для всех посетителей и обеих страниц.</p>
++      <p><strong>STEKLOVPN развивается.</strong> Сейчас доступен каталог прокси. Новые разделы и инструменты появятся здесь позже.</p>
