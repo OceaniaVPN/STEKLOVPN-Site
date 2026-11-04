@@ -243,6 +243,7 @@
   const gameScoreNode=document.getElementById('easter-game-score');
   const gameTimeNode=document.getElementById('easter-game-time');
   const gameStatus=document.getElementById('easter-game-status');
+  const GAME_DURATION=45;
   let gameScore=0,gameTime=GAME_DURATION,gameRunning=false,gameSpawnTimer=0,gameClockTimer=0;
   let brandHits=0,brandHitTimeout=0;
   const gameMilestones={
@@ -253,7 +254,6 @@
     40:'Сорок! Почти легенда STEKLOVPN 🏅',
     50:'ПЯТЬДЕСЯТ! Ты покорил сезонную стихию! 👑'
   };
-  const GAME_DURATION=45;
 
 
   function stopMiniGame(){
