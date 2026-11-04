@@ -340,7 +340,30 @@
     .admin-logout { margin-top:14px; padding:8px 0; border:0; color:var(--muted); background:none; cursor:pointer; font-size:10px; }
     @media(max-width:600px) { .profile-button { width:37px; height:37px; } .season-current { gap:9px; padding:0 11px; } .season-current-note { font-size:8px; } }
     @media(prefers-reduced-motion:reduce) { .weather-layer { display:none; } }
-  </style>
+  
+    /* Сезонная сцена: медленное вращение орбит и объёмного ядра */
+    .scene { perspective:900px; }
+    .halo { transform-origin:50% 50%; animation:main-orbit-a 34s linear infinite; }
+    .halo.h2 { animation:main-orbit-b 46s linear infinite reverse; }
+    .halo.h3 { animation:main-orbit-c 27s linear infinite; }
+    .core { transform-style:preserve-3d; will-change:transform; animation:main-core-spin 24s ease-in-out infinite; }
+    .scene-symbol.one { animation:main-symbol-drift 7s ease-in-out infinite; transform-origin:center; }
+    .scene-symbol.two { animation:main-symbol-drift 9s ease-in-out -2s infinite reverse; }
+    .scene-symbol.three { animation:main-symbol-glint 4.5s ease-in-out infinite; }
+    .season-pill { animation:main-pill-glow 4s ease-in-out infinite; }
+    @keyframes main-orbit-a { from { transform:scaleY(.63) rotate(-27deg); } to { transform:scaleY(.63) rotate(333deg); } }
+    @keyframes main-orbit-b { from { transform:scaleY(.58) rotate(35deg); } to { transform:scaleY(.58) rotate(395deg); } }
+    @keyframes main-orbit-c { from { transform:scaleY(.74) rotate(0); } to { transform:scaleY(.74) rotate(360deg); } }
+    @keyframes main-core-spin { 0%,100% { transform:translateY(0) rotate(-9deg); } 25% { transform:translateY(-7px) rotate(81deg); } 50% { transform:translateY(-12px) rotate(171deg); } 75% { transform:translateY(-6px) rotate(261deg); } }
+    @keyframes main-symbol-drift { 0%,100% { translate:0 0; rotate:0deg; } 50% { translate:0 -10px; rotate:18deg; } }
+    @keyframes main-symbol-glint { 0%,100% { opacity:.42; scale:.82; } 50% { opacity:1; scale:1.18; } }
+    @keyframes main-pill-glow { 0%,100% { box-shadow:0 0 0 rgba(var(--accent-rgb),0); } 50% { box-shadow:0 0 22px rgba(var(--accent-rgb),.17); } }
+    .weather-layer { z-index:0; }
+    .weather-canvas { position:absolute; inset:0; display:block; width:100%; height:100%; }
+    .topbar, main, footer, .wrap { position:relative; z-index:1; }
+    @media(prefers-reduced-motion:reduce) { .halo,.halo.h2,.halo.h3,.core,.scene-symbol,.season-pill { animation:none!important; } }
+
+</style>
 </head>
 <body>
   <div class="weather-layer" id="weather-layer" aria-hidden="true"></div>
