@@ -8,3 +8,12 @@ directory = "./public"
 binding = "ASSETS"
 run_worker_first = true
 not_found_handling = "404-page"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "steklovpn-shared"
+database_id = "PUT_D1_DATABASE_ID_HERE"
+migrations_dir = "migrations"
+
+[secrets]
+required = ["ADMIN_PASSWORD"]
