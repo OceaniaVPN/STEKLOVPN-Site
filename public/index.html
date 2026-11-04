@@ -302,9 +302,48 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+  
+    .profile-button { display:grid; place-items:center; width:40px; height:40px; flex:none; border:1px solid var(--line-strong); border-radius:50%; color:var(--accent); background:rgba(var(--accent-rgb),.08); cursor:pointer; transition:.2s; }
+    .profile-button:hover { transform:translateY(-2px); border-color:rgba(var(--accent-rgb),.5); box-shadow:0 0 24px var(--glow); }
+    .profile-button svg { width:19px; height:19px; }
+    .season-current { display:flex; align-items:center; gap:12px; min-height:50px; padding:0 15px; border:1px solid rgba(var(--accent-rgb),.24); border-radius:12px; background:rgba(var(--accent-rgb),.06); color:var(--accent); }
+    .season-current > span:first-child { font-size:20px; }
+    .season-current strong { font:700 12px 'Space Grotesk'; }
+    .season-current-note { margin-left:auto; color:var(--muted); font-size:9px; }
+    .catalog-card.available { color:inherit; text-decoration:none; cursor:pointer; }
+    .weather-layer { position:fixed; inset:0; z-index:5; overflow:hidden; pointer-events:none; }
+    .weather-particle { position:absolute; top:-8vh; left:var(--x); opacity:var(--opacity); font-size:var(--size); animation:weather-fall var(--duration) linear var(--delay) infinite; will-change:transform; }
+    .weather-rain { width:1px; height:18px; border-radius:2px; background:linear-gradient(transparent,rgba(156,205,242,.75)); animation-name:weather-rainfall; }
+    .weather-snow { color:#d9f2ff; text-shadow:0 0 8px rgba(155,213,242,.6); }
+    .weather-leaf { filter:drop-shadow(0 2px 5px rgba(0,0,0,.25)); }
+    .weather-petal { color:#f4b6ca; text-shadow:0 0 8px rgba(255,190,210,.5); }
+    .weather-sparkle { color:#ffe4a1; text-shadow:0 0 10px rgba(255,220,145,.8); animation-name:weather-twinkle; }
+    @keyframes weather-fall { 0% { transform:translate3d(0,-10vh,0) rotate(0deg); } 100% { transform:translate3d(var(--drift),115vh,0) rotate(330deg); } }
+    @keyframes weather-rainfall { 0% { transform:translate3d(0,-10vh,0); } 100% { transform:translate3d(-8vw,115vh,0); } }
+    @keyframes weather-twinkle { 0%,100% { opacity:.18; transform:scale(.65) rotate(0deg); } 50% { opacity:.85; transform:scale(1.2) rotate(28deg); } }
+    .admin-modal { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:18px; background:rgba(3,7,12,.72); backdrop-filter:blur(12px); }
+    .admin-modal[hidden] { display:none !important; }
+    .admin-dialog { width:min(440px,100%); padding:23px; border:1px solid var(--line-strong); border-radius:22px; background:linear-gradient(145deg,#182230,#0c121b); box-shadow:0 30px 100px rgba(0,0,0,.55); }
+    .admin-dialog-head { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:18px; }
+    .admin-dialog h2 { margin:0; font:700 21px 'Space Grotesk'; letter-spacing:-.8px; }
+    .admin-dialog-copy { margin:7px 0 18px; color:var(--muted); font-size:11px; }
+    .admin-close { display:grid; place-items:center; width:34px; height:34px; border:1px solid var(--line); border-radius:50%; color:var(--muted); background:transparent; cursor:pointer; font-size:19px; }
+    .admin-field { display:grid; gap:7px; margin-bottom:13px; color:var(--muted); font-size:10px; font-weight:800; }
+    .admin-field input { width:100%; min-height:46px; padding:0 13px; border:1px solid var(--line-strong); border-radius:11px; outline:none; color:var(--text); background:#080e16; font:13px 'DM Mono',monospace; }
+    .admin-field input:focus { border-color:var(--accent); }
+    .admin-submit { width:100%; min-height:44px; border:0; border-radius:11px; color:var(--accent-ink); background:linear-gradient(110deg,var(--accent-2),var(--accent)); font-weight:800; cursor:pointer; }
+    .admin-message { min-height:18px; margin:10px 0 0; color:var(--muted); font-size:10px; }
+    .admin-message.error { color:#ff9b9b; }
+    .admin-seasons { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+    .admin-season { min-height:48px; border:1px solid var(--line); border-radius:11px; color:var(--text); background:rgba(255,255,255,.035); cursor:pointer; font-weight:700; }
+    .admin-season[aria-pressed="true"] { border-color:rgba(var(--accent-rgb),.5); color:var(--accent); background:rgba(var(--accent-rgb),.1); }
+    .admin-logout { margin-top:14px; padding:8px 0; border:0; color:var(--muted); background:none; cursor:pointer; font-size:10px; }
+    @media(max-width:600px) { .profile-button { width:37px; height:37px; } .season-current { gap:9px; padding:0 11px; } .season-current-note { font-size:8px; } }
+    @media(prefers-reduced-motion:reduce) { .weather-layer { display:none; } }
   </style>
 </head>
 <body>
+  <div class="weather-layer" id="weather-layer" aria-hidden="true"></div>
   <header class="topbar wrap">
     <a class="brand" href="#" aria-label="STEKLOVPN — главная">
       <span class="brand-mark" aria-hidden="true">S</span>
@@ -313,11 +352,9 @@
     <nav class="nav" aria-label="Главная навигация">
       <a href="#seasons">СЕЗОНЫ</a>
       <a href="#catalogs">КАТАЛОГИ</a>
-      <a class="nav-cta" href="https://github.com/OceaniaVPN/STEKLOVPN-Site" target="_blank" rel="noopener noreferrer">
-        GitHub
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
-      </a>
-    </nav>
+    <button class="profile-button" id="admin-open" type="button" aria-label="Профиль администратора" title="Администратор">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-3.3 3.1-5 7-5s6.3 1.7 7 5"/></svg>
+      </button></nav>
   </header>
 
   <main class="wrap">
@@ -335,7 +372,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
           <a class="btn" href="#seasons">
-            Выбрать оформление
+            О сезонном оформлении
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
           </a>
         </div>
@@ -372,14 +409,9 @@
         <div>
           <div class="section-kicker">НАСТРОЙ СВОЙ ИНТЕРФЕЙС</div>
           <h2 class="season-title" id="season-heading">Времена года</h2>
-          <div class="season-desc">Выбери сезон — цветовая тема сайта изменится сразу.</div>
+          <div class="season-desc">Администратор выбирает сезон сразу для главной и прокси-страницы.</div>
         </div>
-        <div class="season-controls" role="group" aria-label="Выбор сезонной темы">
-          <button class="season-btn" type="button" data-season-choice="spring" aria-pressed="false"><span class="emoji">🌱</span> Весна</button>
-          <button class="season-btn" type="button" data-season-choice="summer" aria-pressed="false"><span class="emoji">☀️</span> Лето</button>
-          <button class="season-btn" type="button" data-season-choice="autumn" aria-pressed="true"><span class="emoji">🍂</span> Осень</button>
-          <button class="season-btn" type="button" data-season-choice="winter" aria-pressed="false"><span class="emoji">❄️</span> Зима</button>
-        </div>
+        <div class="season-current" aria-live="polite"><span id="season-current-emoji">🍂</span><strong id="season-current-label">Осень</strong><span class="season-current-note">Единая тема сайта</span></div>
       </div>
     </section>
 
@@ -390,22 +422,22 @@
           <h2 id="catalog-heading">Каталоги<span class="gradient">.</span></h2>
           <div class="section-sub">Четыре направления STEKLOVPN — каждое на своём месте.</div>
         </div>
-        <div class="catalog-count">00 / 04 ДОСТУПНО</div>
+        <div class="catalog-count">01 / 04 ДОСТУПНО</div>
       </div>
 
       <div class="catalog-grid">
-        <article class="catalog-card coming" aria-label="Каталог прокси — раздел не опубликован">
+        <a class="catalog-card available" href="https://proxy-sait.novogodniysait.workers.dev/" aria-label="Открыть каталог прокси">
           <div class="card-head">
             <span class="card-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z"/><path d="m4.5 7.8 7.5 4.4 7.5-4.4M12 12.2V21"/></svg>
             </span>
-            <span class="card-status pending"><span class="status-dot"></span> В РАЗРАБОТКЕ</span>
+            <span class="card-status live"><span class="status-dot"></span> ДОСТУПЕН</span>
           </div>
           <div class="card-number">КАТАЛОГ 01</div>
           <h3>Прокси</h3>
-          <p>Этот раздел пока не включён в публичную сборку главной страницы.</p>
-          <span class="pending-note">Скоро появится</span>
-        </article>
+          <p>Каталог Telegram-прокси с поиском, фильтрами и быстрым переходом к подключению.</p>
+          <span class="card-link">Открыть каталог <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
 
         <article class="catalog-card coming" aria-label="Каталог VPN-клиентов — в разработке">
           <div class="card-head">
@@ -452,62 +484,40 @@
       <span class="note-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3.5 7.5v5.2c0 4.1 3.5 7.1 8.5 8.3 5-1.2 8.5-4.2 8.5-8.3V7.5L12 3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg>
       </span>
-      <p><strong>STEKLOVPN развивается.</strong> Сейчас доступен каталог прокси, остальные разделы будут открываться постепенно. Выбранная сезонная тема сохраняется на этом устройстве.</p>
+      <p><strong>STEKLOVPN развивается.</strong> Сейчас доступен каталог прокси, остальные разделы будут открываться постепенно. Сезонное оформление общее для всех посетителей и обеих страниц.</p>
     </aside>
   </main>
 
   <footer class="footer wrap">
     <div><strong>STEKLOVPN</strong> <span> · ЦИФРОВОЕ ПРОСТРАНСТВО</span></div>
-    <div class="footer-links">
-      <a href="https://github.com/OceaniaVPN/STEKLOVPN-Site" target="_blank" rel="noopener noreferrer">Главный репозиторий</a>
-      <a href="https://github.com/OceaniaVPN/Proxy_sait" target="_blank" rel="noopener noreferrer">Прокси-проект</a>
-    </div>
   </footer>
 
-  <script>
-    (function () {
-      const root = document.documentElement;
-      const buttons = Array.from(document.querySelectorAll('[data-season-choice]'));
-      const seasonData = {
-        spring: { emoji: '🌱', name: 'SPRING MODE', style: 'Свежий и лёгкий', mood: 'Время цветения', symbols: ['✿', '✧', '·'] },
-        summer: { emoji: '☀️', name: 'SUMMER MODE', style: 'Яркий и солнечный', mood: 'Тёплое сияние', symbols: ['☼', '✦', '·'] },
-        autumn: { emoji: '🍂', name: 'AUTUMN MODE', style: 'Тёплый и уютный', mood: 'Золотой свет', symbols: ['✦', '✧', '·'] },
-        winter: { emoji: '❄️', name: 'WINTER MODE', style: 'Спокойный и чистый', mood: 'Морозное сияние', symbols: ['❄', '✧', '·'] }
-      };
+  <script src="/admin.js" defer></script>
 
-      function applySeason(season, save) {
-        if (!seasonData[season]) season = 'autumn';
-        const data = seasonData[season];
-        root.dataset.season = season;
-        buttons.forEach(function (button) {
-          button.setAttribute('aria-pressed', String(button.dataset.seasonChoice === season));
-        });
-        document.getElementById('season-pill-emoji').textContent = data.emoji;
-        document.getElementById('season-pill-name').textContent = data.name;
-        document.getElementById('showcase-style').textContent = data.style;
-        document.getElementById('showcase-mood').textContent = data.mood;
-        document.getElementById('scene-symbol-one').textContent = data.symbols[0];
-        document.getElementById('scene-symbol-two').textContent = data.symbols[1];
-        document.getElementById('scene-symbol-three').textContent = data.symbols[2];
-        if (save) {
-          try { localStorage.setItem('steklovpn-season', season); } catch (error) { /* Хранилище может быть недоступно. */ }
-        }
-      }
-
-      let initialSeason = 'autumn';
-      try {
-        const savedSeason = localStorage.getItem('steklovpn-season');
-        if (savedSeason && seasonData[savedSeason]) initialSeason = savedSeason;
-      } catch (error) { /* Используем тему по умолчанию. */ }
-
-      buttons.forEach(function (button) {
-        button.addEventListener('click', function () {
-          applySeason(button.dataset.seasonChoice, true);
-        });
-      });
-
-      applySeason(initialSeason, false);
-    }());
-  </script>
+  <section class="admin-modal" id="admin-modal" hidden aria-hidden="true">
+    <div class="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+      <div class="admin-dialog-head"><h2 id="admin-title">Профиль администратора</h2><button class="admin-close" id="admin-close" type="button" aria-label="Закрыть">×</button></div>
+      <div id="admin-login-view">
+        <p class="admin-dialog-copy">Вход доступен только администратору.</p>
+        <form id="admin-login-form">
+          <label class="admin-field">Пароль администратора<input id="admin-password" type="password" autocomplete="current-password" required maxlength="256"></label>
+          <button class="admin-submit" type="submit">Войти</button>
+        </form>
+      </div>
+      <div id="admin-panel-view" hidden>
+        <p class="admin-dialog-copy">Сезон применится на главной и прокси-странице для всех посетителей.</p>
+        <div class="admin-seasons" role="group" aria-label="Глобальная сезонная тема">
+          <button class="admin-season" type="button" data-admin-season="spring">🌸 Весна</button>
+          <button class="admin-season" type="button" data-admin-season="summer">☀️ Лето</button>
+          <button class="admin-season" type="button" data-admin-season="autumn">🍂 Осень</button>
+          <button class="admin-season" type="button" data-admin-season="winter">❄️ Зима</button>
+        </div>
+        <p class="admin-message" id="admin-message" role="status" aria-live="polite"></p>
+        <button class="admin-logout" id="admin-logout" type="button">Выйти из профиля</button>
+      </div>
+      <p class="admin-message" id="admin-login-message" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+  <script src="/admin.js" defer></script>
 </body>
 </html>
