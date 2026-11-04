@@ -16,4 +16,4 @@ database_id = "PUT_D1_DATABASE_ID_HERE"
 migrations_dir = "migrations"
 
 [secrets]
-required = ["ADMIN_PASSWORD"]
+required = ["ADMIN_PASSWORD", "SESSION_SECRET"]
