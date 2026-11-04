@@ -34,7 +34,7 @@
     const active=[],settled=[];
     const cell=28;
     let width=0,height=0,pile=[],last=0,spawn=0,elapsed=0,ground=null;
-    layer.style.zIndex='45';
+    layer.style.zIndex='0';
     layer.style.pointerEvents='none';
     function resize(){
       width=window.innerWidth;height=window.innerHeight;
@@ -243,8 +243,18 @@
   const gameScoreNode=document.getElementById('easter-game-score');
   const gameTimeNode=document.getElementById('easter-game-time');
   const gameStatus=document.getElementById('easter-game-status');
-  let gameScore=0,gameTime=20,gameRunning=false,gameSpawnTimer=0,gameClockTimer=0;
+  let gameScore=0,gameTime=GAME_DURATION,gameRunning=false,gameSpawnTimer=0,gameClockTimer=0;
   let brandHits=0,brandHitTimeout=0;
+  const gameMilestones={
+    5:'Первые пять листьев собраны — осень в твоих руках! 🍂',
+    10:'Десять! Ты уже настоящий охотник за листьями ✨',
+    20:'Двадцать пойманных частиц — ветер тебе не помеха 🌬️',
+    30:'Тридцать! У тебя талант находить каждую частицу 🌟',
+    40:'Сорок! Почти легенда STEKLOVPN 🏅',
+    50:'ПЯТЬДЕСЯТ! Ты покорил сезонную стихию! 👑'
+  };
+  const GAME_DURATION=45;
+
 
   function stopMiniGame(){
     gameRunning=false;
@@ -259,8 +269,8 @@
   function openMiniGame(){
     if(!gameModal)return;
     stopMiniGame();
-    gameScore=0;gameTime=20;
-    gameScoreNode.textContent='0';gameTimeNode.textContent='20';
+    gameScore=0;gameTime=GAME_DURATION;
+    gameScoreNode.textContent='0';gameTimeNode.textContent=String(GAME_DURATION);
     gameArena.replaceChildren(gameHint);gameHint.hidden=false;
     gameHint.textContent='Нажми «Начать игру», чтобы открыть сезонную охоту.';
     gameStart.hidden=false;gameStart.textContent='Начать игру';
@@ -280,7 +290,7 @@
       if(!gameRunning)return;
       gameScore++;gameScoreNode.textContent=String(gameScore);
       target.remove();
-      if(gameScore===10)gameStatus.textContent='Отлично! Уже 10 частиц ✨';
+      if(gameMilestones[gameScore])gameStatus.textContent=gameMilestones[gameScore];
     });
     gameArena.append(target);
     window.setTimeout(()=>target.remove(),2800);
@@ -288,11 +298,14 @@
   function finishMiniGame(){
     stopMiniGame();
     gameStart.hidden=false;gameStart.textContent='Играть ещё раз';
-    gameStatus.textContent=gameScore>=20?'Невероятно! Ты поймал '+gameScore+' частиц! 🏆':'Время вышло! Результат: '+gameScore+'. Попробуешь ещё?';
+    const bestMilestone=[50,40,30,20,10,5].find(value=>gameScore>=value);
+    gameStatus.textContent=gameScore>=50?'ВЕЛИКОЛЕПНО! Все 50 частиц пойманы! 👑':
+      bestMilestone?('Время вышло! '+gameMilestones[bestMilestone]+' Итог: '+gameScore+'.'):
+      'Время вышло! Результат: '+gameScore+'. Попробуешь ещё?';
   }
   function startMiniGame(){
-    stopMiniGame();gameArena.replaceChildren();gameScore=0;gameTime=20;gameRunning=true;
-    gameScoreNode.textContent='0';gameTimeNode.textContent='20';
+    stopMiniGame();gameArena.replaceChildren();gameScore=0;gameTime=GAME_DURATION;gameRunning=true;
+    gameScoreNode.textContent='0';gameTimeNode.textContent=String(GAME_DURATION);
     gameStart.hidden=true;gameStatus.textContent='Лови частицы!';
     spawnGameTarget();gameSpawnTimer=window.setInterval(spawnGameTarget,620);
     gameClockTimer=window.setInterval(()=>{
