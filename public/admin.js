@@ -251,7 +251,7 @@
     if(effectKey!==season){effectKey=season;makeWeather(season);}
   }
   async function api(path,options){
-    const response=await fetch(path,{cache:'no-store',credentials:'same-origin',...options,
+    const response=await fetch(path,{cache:path==='/api/season'?'default':'no-store',credentials:'same-origin',...options,
       headers:{'Accept':'application/json',...(options&&options.headers?options.headers:{})}});
     let data={};try{data=await response.json();}catch(_){}
     if(!response.ok)throw new Error(data.error||'Запрос не выполнен.');
