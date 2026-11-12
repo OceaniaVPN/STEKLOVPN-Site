@@ -1,6 +1,9 @@
 name = "steklovpn-site"
 main = "src/worker.js"
 compatibility_date = "2026-11-04"
+
+[cache]
+enabled = true
 workers_dev = true
 
 [assets]
