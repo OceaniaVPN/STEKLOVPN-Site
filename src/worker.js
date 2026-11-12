@@ -246,7 +246,10 @@ export default {
 
     const headers = new Headers(response.headers);
     for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
-    if (url.pathname.startsWith("/api/")) {
+    if (url.pathname === "/api/season" && request.method === "GET" && response.ok) {
+      headers.set("Cache-Control", "public, max-age=60, s-maxage=60, stale-while-revalidate=60");
+      headers.delete("Pragma");
+    } else if (url.pathname.startsWith("/api/")) {
       headers.set("Cache-Control", "no-store");
       headers.set("Pragma", "no-cache");
     } else if (url.pathname === "/" || url.pathname.endsWith(".html")) {
