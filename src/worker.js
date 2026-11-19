@@ -75,10 +75,21 @@ function sameOrigin(request, url) {
   const origin = request.headers.get("Origin");
   if (!origin) return false;
   try {
-    return new URL(origin).origin === url.origin;
-  } catch {
-    return false;
-  }
+    const normalized = new URL(origin).origin;
+    return normalized === url.origin || normalized === "https://oceaniavpn.github.io";
+  } catch { return false; }
+}
+function pagesCorsHeaders(request) {
+  const origin = request.headers.get("Origin");
+  if (origin !== "https://oceaniavpn.github.io") return {};
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Accept, Content-Type",
+    "Access-Control-Max-Age": "86400",
+    "Vary": "Origin"
+  };
 }
 
 async function createSession(secret) {
@@ -102,11 +113,11 @@ async function isAdmin(request, secret) {
 }
 
 function setSessionCookie(token) {
-  return COOKIE_NAME + "=" + token + "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=" + SESSION_SECONDS;
+  return COOKIE_NAME + "=" + token + "; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=" + SESSION_SECONDS;
 }
 
 function clearSessionCookie() {
-  return COOKIE_NAME + "=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0";
+  return COOKIE_NAME + "=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0";
 }
 
 async function loginAttemptKey(request, secret) {
@@ -214,6 +225,9 @@ async function handleApi(request, env, url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname.startsWith("/api/") && request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: pagesCorsHeaders(request) });
+    }
 
     if (url.protocol !== "https:") {
       url.protocol = "https:";
@@ -246,6 +260,9 @@ export default {
 
     const headers = new Headers(response.headers);
     for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
+    if (url.pathname.startsWith("/api/")) {
+      for (const [name, value] of Object.entries(pagesCorsHeaders(request))) headers.set(name, value);
+    }
     if (url.pathname === "/api/season" && request.method === "GET" && response.ok) {
       headers.set("Cache-Control", "public, max-age=60, s-maxage=60, stale-while-revalidate=60");
       headers.delete("Pragma");
