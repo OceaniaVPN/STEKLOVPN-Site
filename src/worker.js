@@ -86,7 +86,7 @@ function pagesCorsHeaders(request) {
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Accept, Content-Type",
+    "Access-Control-Allow-Headers": "Accept, Authorization, Content-Type",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin"
   };
@@ -102,7 +102,9 @@ async function createSession(secret) {
 
 async function isAdmin(request, secret) {
   if (!secret) return false;
-  const token = cookieValue(request, COOKIE_NAME);
+  const authorization = request.headers.get("Authorization") || "";
+  const bearer = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+  const token = bearer || cookieValue(request, COOKIE_NAME);
   const parts = token.split(".");
   if (parts.length !== 3) return false;
   const expires = Number(parts[0]);
@@ -180,7 +182,7 @@ async function handleApi(request, env, url) {
 
     await env.DB.prepare("DELETE FROM admin_login_attempts WHERE ip_hash = ?").bind(ipHash).run();
     const token = await createSession(env.SESSION_SECRET);
-    return json({ authenticated: true }, 200, { "Set-Cookie": setSessionCookie(token) });
+    return json({ authenticated: true, token }, 200, { "Set-Cookie": setSessionCookie(token) });
   }
 
   if (path === "/api/admin/logout" && method === "POST") {
