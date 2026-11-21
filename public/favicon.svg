@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs>
+  <linearGradient id="bg" x1="8" y1="5" x2="57" y2="60" gradientUnits="userSpaceOnUse"><stop stop-color="#142b50"/><stop offset="1" stop-color="#080e20"/></linearGradient>
+  <linearGradient id="glass" x1="16" y1="8" x2="49" y2="55" gradientUnits="userSpaceOnUse"><stop stop-color="#e4fbff"/><stop offset=".28" stop-color="#64d9ff"/><stop offset=".7" stop-color="#477cff"/><stop offset="1" stop-color="#9a63ff"/></linearGradient>
+  <linearGradient id="lock" x1="22" y1="25" x2="43" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#f8fdff"/><stop offset="1" stop-color="#8bdcff"/></linearGradient>
+  <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect x="2" y="2" width="60" height="60" rx="17" fill="url(#bg)" stroke="#6acfff" stroke-opacity=".45"/>
+<ellipse cx="32" cy="33" rx="25" ry="12" transform="rotate(-34 32 33)" fill="none" stroke="#57d9ff" stroke-width="1.8" opacity=".9" filter="url(#glow)"/>
+<path d="M32 8 49 15v14c0 12-7.5 21-17 27-9.5-6-17-15-17-27V15L32 8Z" fill="#15386a" fill-opacity=".72" stroke="url(#glass)" stroke-width="2.7" filter="url(#glow)"/>
+<path d="m32 12 12.5 5.2v11.5c0 8.8-5.1 15.7-12.5 21-7.4-5.3-12.5-12.2-12.5-21V17.2L32 12Z" fill="#1b4e91" fill-opacity=".5" stroke="#c7f4ff" stroke-opacity=".7"/>
+<path d="M25 29v-3.5a7 7 0 0 1 14 0V29" fill="none" stroke="url(#lock)" stroke-width="3.3" stroke-linecap="round"/>
+<rect x="21.5" y="28" width="21" height="16" rx="4.5" fill="url(#lock)" stroke="#fff" stroke-opacity=".9"/>
+<circle cx="32" cy="35" r="2.1" fill="#15386a"/><path d="M32 36.5v3" stroke="#15386a" stroke-width="1.8" stroke-linecap="round"/>
+<path d="m12 17 1.2 2.8L16 21l-2.8 1.2L12 25l-1.2-2.8L8 21l2.8-1.2L12 17Z" fill="#d9faff" filter="url(#glow)"/>
+<circle cx="51" cy="45" r="1.5" fill="#b7a6ff"/><circle cx="47" cy="12" r="1.2" fill="#8be8ff"/>
+</svg>
