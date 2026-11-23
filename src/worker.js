@@ -246,6 +246,10 @@ export default {
 
     const headers = new Headers(response.headers);
     for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
+    // Publish the canonical URL at the HTTP level as well as in the HTML <head>.
+    if (response.ok && (url.pathname === "/" || url.pathname.endsWith(".html"))) {
+      headers.set("Link", '<https://steklo-vpn-official-store.apruxdomain.store/>; rel="canonical"');
+    }
     if (url.pathname === "/api/season" && request.method === "GET" && response.ok) {
       headers.set("Cache-Control", "public, max-age=60, s-maxage=60, stale-while-revalidate=60");
       headers.delete("Pragma");
