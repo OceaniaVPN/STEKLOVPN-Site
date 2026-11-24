@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://steklo-vpn-official-store.apruxdomain.store/sitemap.xml
