@@ -1,3 +1,4 @@
+# STEKLOVPN public robots policy
 User-agent: *
 Allow: /
 
